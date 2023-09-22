@@ -33,7 +33,7 @@ void addTask() {
     scanf("%s", newTask.title);
     printf("Enter task description:\n ");
     scanf("%s", newTask.description);
-    printf("Enter task deadline (in yyyy/mm/dd format):\n");
+    printf("Enter task deadline yyyy/mm/dd:\n");
     scanf("%10s", newTask.deadline);
     printf("Enter task status:\n ");
     scanf("%s", newTask.status);
@@ -73,8 +73,8 @@ void displayTasks() {
     }
 }
 
-// Function to modify a task
-void modifyTask() {
+// Function to modify a tasks description
+void modifyDesc() {
     int taskId;
     printf("Enter the ID of the task to modify: ");
     scanf("%d", &taskId);
@@ -82,9 +82,44 @@ void modifyTask() {
     // Search for the task with the given ID and modify its attributes if found
     for (int i = 0; i < numTasks; i++) {
         if (tasks[i].id == taskId) {
-            printf("Task found! Enter new description, status, and deadline:\n");
+            printf("Task found! Enter new description:\n");
             scanf("%s", tasks[i].description);
+            printf("Task modified successfully!\n");
+
+        return;
+        }
+    }
+
+    printf("Task with ID %d not found!\n", taskId);
+}
+// Function to modify a task
+void modifyStatus() {
+    int taskId;
+    printf("Enter the ID of the task to modify: ");
+    scanf("%d", &taskId);
+
+    // Search for the task with the given ID and modify its attributes if found
+    for (int i = 0; i < numTasks; i++) {
+        if (tasks[i].id == taskId) {
+            printf("Task found! Enter new status:\n");
             scanf("%s", tasks[i].status);
+            printf("Task modified successfully!\n");
+            return;
+        }
+    }
+
+    printf("Task with ID %d not found!\n", taskId);
+}
+// Function to modify a task
+void modifyDeadline() {
+    int taskId;
+    printf("Enter the ID of the task to modify: ");
+    scanf("%d", &taskId);
+
+    // Search for the task with the given ID and modify its attributes if found
+    for (int i = 0; i < numTasks; i++) {
+        if (tasks[i].id == taskId) {
+            printf("Task found! Enter new deadline:\n");
             scanf("%s", tasks[i].deadline);
             printf("Task modified successfully!\n");
             return;
@@ -225,6 +260,28 @@ void taskCompletedIncompleted() {
     printf("Number of completed tasks: %d\n", completeCount);
     printf("Number of incompleted tasks: %d\n", incompleteCount);
 }
+void tasks3DaysDeadline() {
+    char today[11];
+    time_t now;
+    struct tm today_tm;
+
+    time(&now);
+    strftime(today, 11, "%Y/%m/%d", localtime(&now)); // Get today's date in the same format as the deadlines
+
+    printf("Tasks with a deadline of 3 days from today:\n");
+
+    for (int i = 0; i < numTasks; i++) {
+        if (strcmp(today, tasks[i].deadline) == 0) {
+            printf("ID: %d\n", tasks[i].id);
+            printf("Title: %s\n", tasks[i].title);
+            printf("Description: %s\n", tasks[i].description);
+            printf("Deadline: %s\n", tasks[i].deadline);
+            printf("Status: %s\n", tasks[i].status);
+            printf("----------------------------------------\n");
+        }
+    }
+}
+
 // Main function to run the program
 int main() {
     int choice;
@@ -237,10 +294,9 @@ int main() {
         printf("3. Display options\n");
         printf("4. Modify a task\n");
         printf("5. Delete a task\n");
-        printf("6. Search tasks by ID\n");
-        printf("7. Search tasks by title\n");
-        printf("8. Display statistics\n");
-        printf("9. Exit\n");
+        printf("6. Search\n");
+        printf("7. Display statistics\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
@@ -252,12 +308,13 @@ int main() {
             case 2:
                 addMultipleTasks();
                 break;
-            case 3: {
+            case 3:{
                 int displayChoice;
                 printf("\nDisplay Options\n");
                 printf("1. Display all tasks\n");
                 printf("2. Sort tasks by title\n");
                 printf("3. Sort tasks by deadline\n");
+                printf("4. tasks3DaysDeadline\n");
                 printf("Enter your choice: ");
                 scanf("%d", &displayChoice);
 
@@ -273,25 +330,63 @@ int main() {
                         sortByDeadline();
                         displayTasks();
                         break;
+                    case 4:
+                        tasks3DaysDeadline();
+                        break;
                     default:
                         printf("Invalid choice!\n");
                         break;
                 }
                 break;
             }
-            case 4:
-                modifyTask();
-                break;
+            case 4:{
+                int displayChoice;
+                printf("\nDisplay Options\n");
+                printf("1. Modify by description\n");
+                printf("2. Modify by status\n");
+                printf("3. Modify by deadline\n");
+                printf("Enter your choice: ");
+                scanf("%d", &displayChoice);
+                switch (displayChoice) {
+                    case 1:
+                        modifyDesc();
+                        break;
+                   case 2:
+                        modifyStatus();
+                        break;
+                    case 3:
+                        modifyDeadline();
+                        break;
+                    default:
+                        printf("Invalid choice!\n");
+                        break;
+                }
+               break;
+            }
             case 5:
                 deleteTask();
                 break;
-            case 6:
-                searchById();
+            case 6:{
+                int displayChoice;
+                printf("\nDisplay Options\n");
+                printf("1. Search by ID\n");
+                printf("2. Search by title\n");
+                printf("Enter your choice: ");
+                scanf("%d", &displayChoice);
+                switch (displayChoice) {
+                    case 1:
+                        searchById();
+                        break;
+                   case 2:
+                        searchByTitle();
+                        break;
+                    default:
+                        printf("Invalid choice!\n");
+                        break;
+                }
                 break;
-            case 7:
-                searchByTitle();
-                break;
-           case 8: {
+            }
+           case 7: {
                 int displayChoice;
                 printf("\nStats\n");
                 printf("1. total tasks\n");
@@ -313,7 +408,7 @@ int main() {
                 }
                 break;
             }
-            case 9:
+            case 8:
                 printf("Exiting...\n");
                 break;
             default:
@@ -321,7 +416,7 @@ int main() {
                 break;
         }
 
-    } while (choice != 9);
+    } while (choice != 8);
 
         return 0;
 }
